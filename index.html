@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+  <link rel="stylesheet" href="css/main.css">
+  <style>
+    #dimLayer {
+      position: fixed;
+      z-index: -1;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.3);
+    }
+
+    #contentFrameContainer {
+      width: 100%;
+      overflow-x: hidden;
+    }
+
+    #contentFrame {
+      width: 100%;
+      height: calc(100vh - 100px);
+      border: none;
+    }
+
+    #nowPlayingCard {
+      background-image: url("assets/charbg.jpg");
+      background-size: cover;
+      position: fixed;
+      top: 10px;
+      right: calc(10px + 5vh + 10px);
+      width: 150px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="w3-container w3-margin-bottom" style="position: relative;">
+    <div class="w3-container" style="overflow: hidden;">
+      <img src="assets/logo.png" alt="assets/logo.png" class="w3-image" style="max-height: 15vh;">
+    </div>
+    <div id="volumeButtonContainer" style="position: absolute; top: 10px; right: 10px;">
+      <img id="imageButton" src="assets/volume.png" alt="Button Image" style="max-height: 5vh; opacity: 0.2; cursor: pointer;" class="w3-image" onclick="toggleAudio()">
+    </div>
+    <div id="nowPlayingContainer" style="position: absolute; top: 10px; right: calc(10px + 5vh + 10px + 10px);">
+      <div id="nowPlayingCard" class="w3-card-4 w3-round w3-padding" style="width: 150px; ">
+        <h4 style="font-size: 14px; font-family: Genshin; color: white;">Now Playing:</h4>
+        <p id="currentTrack" style="font-size: 12px;font-family: Genshin; color: white;">Dreamaria</p>
+      </div>
+    </div>
+  </div>
+  
+  
+
+  <div id="dimLayer"></div>
+
+  <div class="w3-container w3-margin-bottom w3-relative">
+    <div class="w3-video" style="position: fixed; z-index: -2; top: 0; left: 0; width: 100%; height: 100%;">
+      <video autoplay muted loop class="w3-video" style="object-fit: cover; width: 100%; height: 100%;">
+        <source src="assets/genshinbg.mp4" type="video/mp4">
+      </video>
+    </div>
+  </div>
+
+  <div class="w3-container w3-margin">
+    <div class="w3-bar w3-white w3-card-4 w3-padding w3-opacity">
+      <center>
+        <button class="w3-bar-item w3-button" onclick="loadFrame('home.html'); playDefaultMusic('Dreamaria')">Home</button>
+        <div class="w3-dropdown-hover">
+          <button class="w3-button">Chapters</button>
+          <div class="w3-dropdown-content w3-bar-block w3-card-4">
+            <button class="w3-bar-item w3-button" onclick="loadFrame('prologue.html'); playPrologueMusic('Mondstadt')">Prologue</button>
+            <button class="w3-bar-item w3-button" onclick="loadFrame('chapterI.html'); playChapter1Music('Liyue')">Chapter I</button>
+            <button class="w3-bar-item w3-button" onclick="loadFrame('ChapterII.html'); playChapter2Music('Inazuma')">Chapter II</button>
+            <button class="w3-bar-item w3-button" onclick="loadFrame('ChapterIII.html'); playChapter3Music('Sumeru')">Chapter III</button>
+            <button class="w3-bar-item w3-button" onclick="loadFrame('ChapterIV.html'); playChapter4Music('Fontaine')">Chapter IV</button>
+            <button class="w3-bar-item w3-button" onclick="">Coming Soon</button>
+          </div>
+        </div>
+        <div class="w3-dropdown-hover">
+          <button class="w3-button">The Seven</button>
+          <div class="w3-dropdown-content w3-bar-block w3-card-4">
+            <button class="w3-bar-item w3-button" onclick="loadFrame('about.html'); playSnowMusic('Snow-Buried Tales')">About</button>
+            <button class="w3-bar-item w3-button" onclick="loadFrame('venti.html'); playVentiMusic('Bards Adventure')">Nameless Bard</button>
+            <button class="w3-bar-item w3-button" onclick="loadFrame('zhongli.html'); playZhongliMusic('Rex Incognito')">Lord of Geo</button>
+            <button class="w3-bar-item w3-button" onclick="loadFrame('raiden.html'); playRaidenMusic('Termination of Desires')">Narukami Ogosho</button>
+            <button class="w3-bar-item w3-button" onclick="loadFrame('nahida.html'); playNahidaMusic('Surasthana Fantasia')">God of Wisdom</button>
+            <button class="w3-bar-item w3-button" onclick="loadFrame('furina.html'); playFurinaMusic('Se mettre sur son trente-et-un !')">Regina of All Waters</button>
+          </div>
+        </div>
+      </center>
+      <button class="w3-bar-item w3-button" onclick="loadFrame('aboutme.html'); playSpaceMusic('Space Walk')">About Me</button>
+    </div>
+  </div>
+
+  <div id="contentFrameContainer">
+    <iframe id="contentFrame" class="w3-container" src="" frameborder="0"></iframe>
+  </div>
+
+  <audio id="backgroundAudio" loop autoplay style="display: none;">
+    <source src="assets/dreamaria.mp3" type="audio/mp3">
+  </audio>
+
+  <script>
+    var isAudioPlaying = true;
+
+    function toggleAudio() {
+      var backgroundAudio = document.getElementById("backgroundAudio");
+      if (isAudioPlaying) {
+        backgroundAudio.pause();
+        document.getElementById("imageButton").src = "assets/volumeoff.png";
+      } else {
+        backgroundAudio.play();
+        document.getElementById("imageButton").src = "assets/volume.png";
+      }
+      isAudioPlaying = !isAudioPlaying;
+    }
+
+    function loadFrame(pageURL) {
+      document.getElementById("contentFrame").src = pageURL;
+    }
+
+    function updateNowPlaying(songName) {
+      document.getElementById("currentTrack").innerText = songName;
+    }
+
+    function playPrologueMusic(songName) {
+      var backgroundAudio = document.getElementById("backgroundAudio");
+      backgroundAudio.src = "assets/mondstadt.mp3";
+      backgroundAudio.play();
+      updateNowPlaying(songName);
+    }
+
+    function playDefaultMusic(songName) {
+      var backgroundAudio = document.getElementById("backgroundAudio");
+      backgroundAudio.src = "assets/dreamaria.mp3";
+      backgroundAudio.play();
+      updateNowPlaying(songName);
+    }
+
+    function playChapter1Music(songName) {
+      var backgroundAudio = document.getElementById("backgroundAudio");
+      backgroundAudio.src = "assets/liyue.mp3";
+      backgroundAudio.play();
+      updateNowPlaying(songName);
+    }
+
+    function playChapter2Music(songName) {
+      var backgroundAudio = document.getElementById("backgroundAudio");
+      backgroundAudio.src = "assets/inazuma.mp3";
+      backgroundAudio.play();
+      updateNowPlaying(songName);
+    }
+
+    function playChapter3Music(songName) {
+      var backgroundAudio = document.getElementById("backgroundAudio");
+      backgroundAudio.src = "assets/sumeru.mp3";
+      backgroundAudio.play();
+      updateNowPlaying(songName);
+    }
+
+    function playChapter4Music(songName) {
+      var backgroundAudio = document.getElementById("backgroundAudio");
+      backgroundAudio.src = "assets/fontaine.mp3";
+      backgroundAudio.play();
+      updateNowPlaying(songName);
+    }
+
+    function playVentiMusic(songName) {
+      var backgroundAudio = document.getElementById("backgroundAudio");
+      backgroundAudio.src = "assets/venti.mp3";
+      backgroundAudio.play();
+      updateNowPlaying(songName);
+    }
+
+    function playZhongliMusic(songName) {
+      var backgroundAudio = document.getElementById("backgroundAudio");
+      backgroundAudio.src = "assets/zhongli.mp3";
+      backgroundAudio.play();
+      updateNowPlaying(songName);
+    }
+
+    function playRaidenMusic(songName) {
+      var backgroundAudio = document.getElementById("backgroundAudio");
+      backgroundAudio.src = "assets/raiden.mp3";
+      backgroundAudio.play();
+      updateNowPlaying(songName);
+    }
+
+    function playNahidaMusic(songName) {
+      var backgroundAudio = document.getElementById("backgroundAudio");
+      backgroundAudio.src = "assets/nahida.mp3";
+      backgroundAudio.play();
+      updateNowPlaying(songName);
+    }
+
+    function playFurinaMusic(songName) {
+      var backgroundAudio = document.getElementById("backgroundAudio");
+      backgroundAudio.src = "assets/furina.mp3";
+      backgroundAudio.play();
+      updateNowPlaying(songName);
+    }
+
+    function playSnowMusic(songName) {
+      var backgroundAudio = document.getElementById("backgroundAudio");
+      backgroundAudio.src = "assets/snow.mp3";
+      backgroundAudio.play();
+      updateNowPlaying(songName);
+    }
+    function playSpaceMusic(songName) {
+      var backgroundAudio = document.getElementById("backgroundAudio");
+      backgroundAudio.src = "assets/spacewalk.mp3";
+      backgroundAudio.play();
+      updateNowPlaying(songName);
+    }
+  </script>
+</body>
+
+</html>
